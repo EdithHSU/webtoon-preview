@@ -18,7 +18,7 @@
           <img class="pages" src="images/01.png">
           <img class="pages" src="images/02.gif">
           <img class="pages" src="images/03.png">
-          <img class="pages" src="images/04.gif">
+          <video class="pages anim" src="images/04.webm" data-in="0.6" data-out="0" muted playsinline preload="auto"></video>
           <img class="pages" src="images/05.png">
           <img class="pages" src="images/06.gif">
           <img class="pages" src="images/07.png">
@@ -33,7 +33,7 @@
           <img class="pages" src="images/16.png">
           <img class="pages" src="images/17.gif">
           <img class="pages" src="images/18.png">
-          <img class="pages" src="images/19.gif">
+          <video class="pages anim" src="images/19.webm" data-in="0.1" data-out="0" muted playsinline preload="auto"></video>
           <img class="pages" src="images/20.png">
           <img class="pages" src="images/21.gif">
           <img class="pages" src="images/22.png">
@@ -82,5 +82,59 @@
         </div>
       </div>
     </div>
+    <script>
+      const videos = document.querySelectorAll('.anim');
+
+      videos.forEach(video => {
+
+        const inThreshold  = parseFloat(video.dataset.in)  || 0.6;
+        const outThreshold = parseFloat(video.dataset.out) || 0;
+        const delay        = parseInt(video.dataset.delay) || 0;
+
+        let timer = null;
+        let playing = false;
+
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+
+            const ratio = entry.intersectionRatio;
+
+            // ===== 滑入播放 =====
+            if (ratio >= inThreshold && !playing) {
+
+              clearTimeout(timer);
+
+              timer = setTimeout(() => {
+                video.play();
+                playing = true;
+              }, delay);
+            }
+
+            // ===== 滑出初始化 =====
+            if (ratio <= outThreshold && playing) {
+
+              clearTimeout(timer);
+
+              video.pause();
+              video.currentTime = 0;
+              playing = false;
+            }
+
+          });
+        }, {
+          threshold: buildThresholdArray(inThreshold, outThreshold)
+        });
+
+        observer.observe(video);
+
+      });
+
+
+      /* 建立 threshold 陣列（避免漏掉門檻） */
+      function buildThresholdArray(inT, outT) {
+        const set = new Set([0, 1, inT, outT]);
+        return Array.from(set).sort((a, b) => a - b);
+      }
+    </script>
   </body>
 </html>
