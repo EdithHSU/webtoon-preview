@@ -7,6 +7,8 @@ body{
     width: 100%;
 }
 
-.anim{
-    margin-bottom: -1%;
+img,
+video {
+  display: block;
+  width: 100%;
 }
